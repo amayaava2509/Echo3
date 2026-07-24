@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Music player</title>
+  <style>
+  @import url('https://fonts.googleapis.com/css2?family=Cedarville+Cursive&family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=SN+Pro:ital,wght@0,200..900;1,200..900&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+  body {
+    background-image: url("image.jpg");
+    background-repeat: no-repeat; /* Prevents the image from repeating */
+    background-size: cover;      /* Scales the image to cover the entire container */
+    background-attachment: fixed; /* Fixes the image position so it doesn't scroll with content */
+    text-align: center;
+    display: flex;
+  }
+  #playerBox {
+    width: 300px;
+    height: 490px;
+    justify-self: center;
+    margin-top: 25px;
+    margin-left: 30px;
+    border-radius: 14px;
+    background-color: rgba(255,255,255,0.4);
+    backdrop-filter: blur(3.5px);
+    box-shadow:  0px 0px 10px rgba(0,0,0,0.4);
+    position: relative;
+    display: flex;
+  }
+  .songPoster {
+    position: absolute;
+    width: 270px;
+    height: 270px;
+    justify-self: center;
+    padding-left: 15px;
+    padding-top: 15px;
+    text-align: left;
+  }
+  #progressBar {
+    position: absolute;
+    bottom: 96px;
+    left: 18px;
+    width: 85%;
+    height: 10px;
+    outline: none;
+    accent-color: #3E5B1B;
+  }
+  #progressBar::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 30px;
+    height: 30px;
+    
+  }
+  #icons {
+    position: absolute;
+    bottom: -3px;
+    margin-bottom: 5px;
+    left: 40px;
+  }
+  #previousButton, #playButton, #nextButton {
+    width: 40px;
+    height: 40px;
+    padding: 15px;
+    filter: drop-shadow(0px 0px 7px rgba(0,0,0,0.6));
+  }
+  .songTitle, .songArtist {
+    margin-top: 300px;
+    justify-content: space-around;
+    flex-direction: column;
+    color: white;
+    position: absolute;
+    left: 15px;
+    color: #3E5B1B;
+    text-shadow: 0px 0px 6px white;
+  }
+  .songTitle {
+    bottom: 100px;
+    font-size: 32px;
+    font-family: Cedarville Cursive
+  }
+  .songArtist {
+    bottom: 95px;
+    font-size: 16px;
+    font-family: Poppins;
+  }
+  #playingTime, #totalTime {
+    color: #3E5B1B;
+    font-size: 14px;
+    font-family: Poppins;
+  }
+  #playingTime {
+    position: absolute; 
+    left: 20px;
+    bottom: 55px;
+  }
+  #totalTime {
+    position: absolute; 
+    right: 25px;
+    bottom: 55px;
+  }
+  </style>
+</head>
+<body>
+  <section>
+    <div id="playerBox">
+      <audio id="songAudio" type="audio/mpeg" preload="auto"></audio>
+      <img class="songPoster">
+      <h4 class="songTitle"></h4><br>
+      <h5 class="songArtist"></h5>
+      <input type="range" id="progressBar" value="0" max="100" step="0.15">
+      <p id="playingTime"><b>0.00</b></p>
+      <p id="totalTime"><b>0.00</b></p>
+      <div id="icons">
+        <img src="Previous.png" id="previousButton">
+        <img src="Play.png" id="playButton">
+        <img src="Next.png" id="nextButton">
+      </div>
+    </div>
+  </section>
+  
+  <script>
+const songAudio = document.getElementById('songAudio');
+const songPoster = document.querySelector('.songPoster');
+const songTitle = document.querySelector('.songTitle');
+const songArtist = document.querySelector('.songArtist');
+const progressBar = document.getElementById('progressBar');
+
+let songs = [
+  {
+    src: "Kannukulla.mp3",
+    image: "Kannukulla.jpg", 
+    title: "Kannukulla", 
+    artist: "Sai Abhyankkar"
+  },
+  {
+    src: "Kalyani.mp3",
+    image: "Kalyani.jpg",
+    title: "Kalyani",
+    artist: "ARJN, KDS, FIFTY4, RONN"
+  },
+  {
+    src: "OorumBlood.mp3",
+    image: "OorumBlood.jpg",
+    title: "Oorum Blood",
+    artist: "Sai Abhyankkar"
+  }
+];
+
+let currentSong = 0;
+
+function loadSong(index) {
+  songAudio.src = songs[index].src;
+  songPoster.src = songs[index].image;
+  songTitle.textContent = songs[index].title;
+  songArtist.textContent = songs[index].artist;
+
+  progressBar.value = 0;
+  songAudio.currentTime = 0;
+}
+
+loadSong(currentSong);
+
+// Next
+document.getElementById('nextButton').addEventListener('click', () => {
+  currentSong++;
+  if (currentSong >= songs.length) currentSong = 0;
+  loadSong(currentSong);
+  songAudio.play();
+  const playIcon = document.getElementById('playButton');
+  playIcon.src = "Pause.png";
+});
+
+// Previous
+document.getElementById('previousButton').addEventListener('click', () => {
+  currentSong--;
+  if (currentSong < 0) currentSong = songs.length - 1;
+  loadSong(currentSong);
+  songAudio.play();
+  const playIcon = document.getElementById('playButton');
+  playIcon.src = "Pause.png";
+});
+
+//Replay
+songAudio.addEventListener('ended', () => {
+  const playIcon = document.getElementById('playButton');
+  playIcon.src = "Replay.png";
+});
+
+// Play / Pause toggle
+document.getElementById('playButton').addEventListener('click', () => {
+  songAudio.classList.toggle('playing');
+
+  const playIcon = document.getElementById('playButton');
+
+  if (songAudio.classList.contains('playing')) {
+    songAudio.play();
+    playIcon.src = "Pause.png";
+  } else {
+    songAudio.pause();
+    playIcon.src = "Play.png";
+  }
+  
+  if (playIcon.currentSrc.includes("Replay.png")) {
+    songAudio.load()
+    progressBar.value = 0;
+    songAudio.currentTime = 0;
+    songAudio.play();
+    playIcon.src = "Pause.png";
+  }
+});
+
+// Update progress bar while playing
+songAudio.addEventListener('timeupdate', () => {
+  if (!songAudio.duration) return;
+
+  let percentage = (songAudio.currentTime / songAudio.duration) * 100;
+  progressBar.value = percentage;
+});
+
+// Seek
+progressBar.addEventListener('input', () => {
+  let duration = songAudio.duration;
+  let value = progressBar.value;
+
+  songAudio.currentTime = (value / 100) * duration;
+});
+
+//Format time
+function formatTime(seconds) {
+  var min = Math.floor(seconds / 60);
+  var sec = Math.floor(seconds % 60);
+  if (sec < 10) sec = '0' + sec;
+  return min + ":" + sec;
+}
+
+//Update playingTime
+songAudio.addEventListener('timeupdate', () => {
+  const playingTime = document.getElementById('playingTime');
+  playingTime.innerHTML= `<b>${formatTime(songAudio.currentTime)}</b>`;
+});
+//Update totalTime
+songAudio.addEventListener('loadedmetadata', () => {
+  const totalTime = document.getElementById('totalTime');
+  totalTime.innerHTML = `<b>${formatTime(songAudio.duration)}</b>`;
+});
+  </script>
+</body>
+</html>
+  
