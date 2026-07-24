@@ -6,4 +6,6 @@ A nature-themed music player consisting of 3 songs.
 
 **[ [Click Here to Open Echo3 Music Player](https://amayaava2509.github.io/Echo3/) ]**
 
+## 📝 Tech Stack
 
+Languages: HTML, CSS and JavaScript
